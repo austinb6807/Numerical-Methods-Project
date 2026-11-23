@@ -88,3 +88,7 @@ def runge_kutta(f, t0, h , y0, time):
         y[ii, :] = y_prev + (h/6)*(k1 +2*k2 + 2*k3 +k4)
 
     return tlist, y
+
+
+
+
