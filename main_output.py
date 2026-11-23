@@ -5,19 +5,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+R_tot = 1 / (hi * np.pi * Di) + np.log(Do / Di) / (2 * np.pi * kw) + 1 / (ho * np.pi * Do)
 
+euler_steps, euler_temps = pipe_iterate(euler, step_size, pipe_length, hi, ho, Di, Do , kw , mdot, cp, T_f, T_am, R_tot)
+meuler_steps, meuler_temps = pipe_iterate(improved_euler, step_size, pipe_length, hi, ho, Di, Do , kw , mdot, cp, T_f, T_am, R_tot)
+rk4_steps, rk4_temps = pipe_iterate(runge_kutta, step_size, pipe_length, hi, ho, Di, Do , kw , mdot, cp, T_f, T_am, R_tot)
 
-euler_steps, euler_temps = pipe_iterate(euler, step_size, pipe_length, hi, ho, Di, Do , kw , mdot, cp, T_f, T_am)
-meuler_steps, meuler_temps = pipe_iterate(improved_euler, step_size, pipe_length, hi, ho, Di, Do , kw , mdot, cp, T_f, T_am)
-rk4_steps, rk4_temps = pipe_iterate(runge_kutta, step_size, pipe_length, hi, ho, Di, Do , kw , mdot, cp, T_f, T_am)
-
-
-print(euler_temps)
-
+exact_solution = T_am + (T_f - T_am) * np.e**(-pipe_length/(mdot * cp * R_tot))
 
 fig, axes = plt.subplots(3, 1, figsize=(8, 12), sharex=True, layout='constrained')
 for ax in axes:
     ax.ticklabel_format(axis='y', useOffset=False, style='plain')
+
+
+print(f"Exact final temp: {exact_solution:.6f}")
+print(f"Euler final temp: {euler_temps[-1, 0]:.6f}")
+print(f"Improved Euler final temp: {meuler_temps[-1, 0]:.6f}")
+print(f"RK4 final temp: {rk4_temps[-1, 0]:.6f}")
 
 # Euler plots
 axes[0].plot(euler_steps, euler_temps, 'b-', linewidth=1, label='Euler')
@@ -43,6 +47,7 @@ axes[2].legend(fontsize=9)
 
 fig.suptitle(f'Water Temperature Along {pipe_length}m Long Pipe', fontsize=12)
 plt.show()
+
 
 
 
